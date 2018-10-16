@@ -11,7 +11,10 @@ def main(argv):
     from model.model import discriminator
     from glob import glob
 
-    files=glob('/home/zdenek/Projects/tensorflow_work/solid_images2/b*.conf')+ glob('/home/zdenek/Projects/tensorflow_work/solid_images/a*.conf')+ glob('/home/zdenek/Projects/tensorflow_work/solid_images2/a*.conf')
+    files=(glob('/home/zdenek/Projects/tensorflow_work/solid_images2/b*.conf')
+            +glob('/home/zdenek/Projects/tensorflow_work/solid_images/a*.conf')
+            +glob('/home/zdenek/Projects/tensorflow_work/solid_images2/a*.conf')
+            )
 
     next_element,init_op=data_pipeline(files,batch=128)
 
@@ -22,10 +25,15 @@ def main(argv):
 
     fl=discriminator(inputs=next_element['images'],outputs=next_element['labels']) 
 
+    save=tf.train.Saver()
+
     with tf.Session() as session:
         print("Start Session")
         """Init"""
         tf.global_variables_initializer().run(session=session)
+
+        save.restore(session,'log/last.ckpt')
+
         session.run(init_op)
 
         #a=session.run(next_element)
@@ -36,6 +44,7 @@ def main(argv):
 
         for i in range(20000):
             acc,l,_=session.run([fl.accuracy,fl.loss,fl.train],feed_dict={fl.rate: 1e-3})
+            #acc,l=session.run([fl.accuracy,fl.loss],feed_dict={fl.rate: 1e-3})
             print(i,acc,l)
 
             if i%100 is 0:
@@ -46,6 +55,9 @@ def main(argv):
                 name='figures/f_%04d.png'%count
                 save_images(name,a['images'],a['labels'])
                 count+=1
+
+            if i%200 is 0:
+                save.save(session,'log/last.ckpt')
 
 if __name__=="__main__":
     import tensorflow as tf

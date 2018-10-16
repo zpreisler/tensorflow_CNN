@@ -6,6 +6,11 @@ def __parse__(dataset):
     image_cropped=tf.image.central_crop(image_resized,0.5)
 
     images=image_cropped/tf.reduce_max(image_cropped)
+
+    images=tf.image.random_flip_left_right(images)
+    images=tf.image.random_flip_up_down(images)
+    images=tf.image.rot90(images)
+
     labels=tf.one_hot(dataset['outputs'],10)
 
     return {'images':images,'labels':labels}
