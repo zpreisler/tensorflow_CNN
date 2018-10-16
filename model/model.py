@@ -29,7 +29,7 @@ class discriminator:
                     padding='valid',
                     activation=tf.nn.leaky_relu)
 
-            self.pool_1=tf.layers.max_pooling2d(
+            self.pool_1=tf.layers.average_pooling2d(
                     inputs=self.conv_1,
                     pool_size=[4,4],
                     strides=2)
@@ -43,7 +43,7 @@ class discriminator:
                     padding='valid',
                     activation=tf.nn.leaky_relu)
 
-            self.pool_2=tf.layers.max_pooling2d(
+            self.pool_2=tf.layers.average_pooling2d(
                     inputs=self.conv_2,
                     pool_size=[4,4],
                     strides=2)
@@ -57,16 +57,29 @@ class discriminator:
                     padding='valid',
                     activation=tf.nn.leaky_relu)
 
-            self.pool_3=tf.layers.max_pooling2d(
+            self.pool_3=tf.layers.average_pooling2d(
                     inputs=self.conv_3,
                     pool_size=[4,4],
                     strides=2)
 
             print(self.pool_3)
 
-            n=self.pool_3.shape[1]*self.pool_3.shape[2]*self.pool_3.shape[3]
-            self.flat=tf.reshape(self.pool_3,[-1,n])
+            #n=self.pool_3.shape[1]*self.pool_3.shape[2]*self.pool_3.shape[3]
+            #self.flat=tf.reshape(self.pool_3,[-1,n])
 
+            n=self.pool_1.shape[1]*self.pool_1.shape[2]*self.pool_1.shape[3]
+            self.flat_1=tf.reshape(self.pool_1,[-1,n])
+
+            n=self.pool_2.shape[1]*self.pool_2.shape[2]*self.pool_2.shape[3]
+            self.flat_2=tf.reshape(self.pool_2,[-1,n])
+
+            n=self.pool_3.shape[1]*self.pool_3.shape[2]*self.pool_3.shape[3]
+            self.flat_3=tf.reshape(self.pool_3,[-1,n])
+
+            self.flat=tf.concat([self.flat_1,self.flat_2,self.flat_3],1)
+            print(self.flat_1)
+            print(self.flat_2)
+            print(self.flat_3)
             print(self.flat)
 
             self.dense_1=tf.layers.dense(

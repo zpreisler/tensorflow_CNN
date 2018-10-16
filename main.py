@@ -7,7 +7,7 @@ def main(argv):
     print("Convolutional Neural Network")
     import tensorflow as tf
     from model.data_pipeline import data_pipeline,get_labels
-    from model.data_plot import plot_images,save_images,plot_softmax,save_softmax
+    from model.data_plot import plot_images,save_images,plot_softmax,save_softmax,plot_images_softmax,save_images_softmax
     from model.model import discriminator
     from glob import glob
 
@@ -30,9 +30,12 @@ def main(argv):
     with tf.Session() as session:
         print("Start Session")
         """Init"""
-        tf.global_variables_initializer().run(session=session)
 
-        save.restore(session,'log/last.ckpt')
+        try:
+            save.restore(session,'log/last.ckpt')
+        except tf.errors.NotFoundError:
+            tf.global_variables_initializer().run(session=session)
+            pass
 
         session.run(init_op)
 
@@ -42,18 +45,23 @@ def main(argv):
         from matplotlib.pyplot import figure,show,plot
         count=0
 
-        for i in range(20000):
-            acc,l,_=session.run([fl.accuracy,fl.loss,fl.train],feed_dict={fl.rate: 1e-3})
+        for i in range(1):
+            acc,l,_=session.run([fl.accuracy,fl.loss,fl.train],feed_dict={fl.rate: 1e-4})
             #acc,l=session.run([fl.accuracy,fl.loss],feed_dict={fl.rate: 1e-3})
             print(i,acc,l)
 
-            if i%100 is 0:
+            if i%1 is 0:
                 a,true,softmax,acc,l,_=session.run([next_element,fl.outputs,fl.softmax,fl.accuracy,fl.loss,fl.train],
-                        feed_dict={fl.rate: 1e-2})
+                        feed_dict={fl.rate: 1e-4})
                 name='figures/g_%04d.png'%count
                 save_softmax(name,true,softmax)
                 name='figures/f_%04d.png'%count
                 save_images(name,a['images'],a['labels'])
+                
+                name='figures/a_%04d.png'%count
+                plot_images_softmax(a['images'],a['labels'],true,softmax)
+                save_images_softmax(name,a['images'],a['labels'],true,softmax)
+
                 count+=1
 
             if i%200 is 0:
