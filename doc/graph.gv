@@ -1,0 +1,21 @@
+digraph CNN {
+	node [shape =record];
+
+	flat [label = "{  { <f0> pool1 | <f1> pool2 | <f2> pool3 }  } "]
+	conv1 [label ="conv/pool"]
+	conv2 [label ="conv/pool"]
+	conv3 [label ="conv/pool"]
+
+	input -> conv1;
+	conv1 -> conv2;
+	conv2 -> conv3;
+	conv1 -> "flat":f0;
+	conv2 -> "flat":f1;
+	conv3 -> "flat":f2;
+
+	subgraph c_1 {
+		label="Subgraph B";
+		flat -> dense;
+		dense -> out;
+	}
+}
