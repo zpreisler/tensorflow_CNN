@@ -39,27 +39,26 @@ def main(argv):
 
         session.run(init_op)
 
-        #a=session.run(next_element)
-        #plot_images(a['images'],a['labels'])
-
         from matplotlib.pyplot import figure,show,plot
         count=0
 
-        for i in range(1):
-            acc,l,_=session.run([fl.accuracy,fl.loss,fl.train],feed_dict={fl.rate: 1e-4})
-            #acc,l=session.run([fl.accuracy,fl.loss],feed_dict={fl.rate: 1e-3})
+        for i in range(10000):
+            acc,l,_=session.run([fl.accuracy,fl.loss,fl.train],feed_dict={fl.rate: 1e-5})
             print(i,acc,l)
 
-            if i%1 is 0:
-                a,true,softmax,acc,l,_=session.run([next_element,fl.outputs,fl.softmax,fl.accuracy,fl.loss,fl.train],
-                        feed_dict={fl.rate: 1e-4})
-                name='figures/g_%04d.png'%count
-                save_softmax(name,true,softmax)
-                name='figures/f_%04d.png'%count
-                save_images(name,a['images'],a['labels'])
+
+            if i%100 is 0:
+                a,true,softmax,acc,l,_=session.run([next_element,
+                    fl.outputs,fl.softmax,
+                    fl.accuracy, fl.loss,fl.train],
+                        feed_dict={fl.rate: 1e-5})
+
+                plot_images_softmax(a['images'],a['labels'],true,softmax)
                 
                 name='figures/a_%04d.png'%count
-                plot_images_softmax(a['images'],a['labels'],true,softmax)
+                save_images_softmax(name,a['images'],a['labels'],true,softmax)
+
+                name='figures/a_%04d.pdf'%count
                 save_images_softmax(name,a['images'],a['labels'],true,softmax)
 
                 count+=1
