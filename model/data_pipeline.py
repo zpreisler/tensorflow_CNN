@@ -9,7 +9,7 @@ def __parse__(dataset):
 
     images=tf.image.random_flip_left_right(images)
     images=tf.image.random_flip_up_down(images)
-    images=tf.image.rot90(images)
+    #images=tf.image.rot90(images)
 
     labels=tf.one_hot(dataset['outputs'],10)
 

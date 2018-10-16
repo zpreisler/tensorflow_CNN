@@ -16,7 +16,7 @@ def main(argv):
             +glob('/home/zdenek/Projects/tensorflow_work/solid_images2/a*.conf')
             )
 
-    next_element,init_op=data_pipeline(files,batch=128)
+    next_element,init_op=data_pipeline(files,batch=2048)
 
     print(len(files))
 
@@ -42,18 +42,20 @@ def main(argv):
         from matplotlib.pyplot import figure,show,plot
         count=0
 
-        for i in range(10000):
-            acc,l,_=session.run([fl.accuracy,fl.loss,fl.train],feed_dict={fl.rate: 1e-5})
+        for i in range(0):
+            acc,l,_=session.run([fl.accuracy,
+                fl.loss,fl.train],feed_dict={fl.rate: 1e-5})
             print(i,acc,l)
 
-
             if i%100 is 0:
-                a,true,softmax,acc,l,_=session.run([next_element,
+
+                a,true,softmax,acc=session.run([next_element,
                     fl.outputs,fl.softmax,
-                    fl.accuracy, fl.loss,fl.train],
+                    fl.accuracy],
                         feed_dict={fl.rate: 1e-5})
 
-                plot_images_softmax(a['images'],a['labels'],true,softmax)
+
+                #plot_images_softmax(a['images'],a['labels'],true,softmax)
                 
                 name='figures/a_%04d.png'%count
                 save_images_softmax(name,a['images'],a['labels'],true,softmax)
@@ -65,6 +67,24 @@ def main(argv):
 
             if i%200 is 0:
                 save.save(session,'log/last.ckpt')
+
+        for i in range(100):
+                a,true,softmax,acc=session.run([next_element,
+                    fl.outputs,fl.softmax,
+                    fl.accuracy],
+                        feed_dict={fl.rate: 1e-5})
+                
+                print(i,acc)
+
+                #plot_images_softmax(a['images'],a['labels'],true,softmax)
+                
+                name='figures/a_%04d.png'%count
+                save_images_softmax(name,a['images'],a['labels'],true,softmax)
+
+                name='figures/a_%04d.pdf'%count
+                save_images_softmax(name,a['images'],a['labels'],true,softmax)
+
+                count+=1
 
 if __name__=="__main__":
     import tensorflow as tf
