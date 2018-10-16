@@ -16,8 +16,8 @@ def plot_images(image,label,x=5,y=5):
             hspace=0.22)
     show()
 
-def save_images(image,label,x=5,y=5):
-    from matplotlib.pyplot import imshow,figure,show,subplots,subplots_adjust
+def save_images(name,image,label,x=5,y=5):
+    from matplotlib.pyplot import imshow,figure,show,subplots,subplots_adjust,savefig,close
     fig,axes=subplots(x,y,figsize=(12,12))
     count=0
     for n in range(x):
@@ -32,7 +32,8 @@ def save_images(image,label,x=5,y=5):
             top=0.97,
             wspace=0.22,
             hspace=0.22)
-    show()
+    savefig(name)
+    close()
 
 def plot_softmax(true,softmax,x=5,y=5):
     from matplotlib.pyplot import imshow,figure,show,subplots,subplots_adjust
