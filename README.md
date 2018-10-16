@@ -1,5 +1,5 @@
 # tensorflow CNN
-#### convolutional network to classify 2 dimensional solids using images
+Convolutional network to classify 2 dimensional solids using images
 
 ![graph](doc/g.png)
 
