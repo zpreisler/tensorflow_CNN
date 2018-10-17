@@ -24,42 +24,42 @@ class discriminator:
         with tf.variable_scope(name):
             self.conv_1=tf.layers.conv2d(
                     inputs=inputs,
-                    filters=16,
-                    kernel_size=[4,4],
+                    filters=8,
+                    kernel_size=[2,2],
                     padding='valid',
                     activation=tf.nn.leaky_relu)
 
             self.pool_1=tf.layers.average_pooling2d(
                     inputs=self.conv_1,
-                    pool_size=[4,4],
+                    pool_size=[2,2],
                     strides=2)
 
             print(self.pool_1)
 
             self.conv_2=tf.layers.conv2d(
                     inputs=self.pool_1,
-                    filters=32,
-                    kernel_size=[4,4],
+                    filters=16,
+                    kernel_size=[2,2],
                     padding='valid',
                     activation=tf.nn.leaky_relu)
 
             self.pool_2=tf.layers.average_pooling2d(
                     inputs=self.conv_2,
-                    pool_size=[4,4],
+                    pool_size=[2,2],
                     strides=2)
 
             print(self.pool_2)
 
             self.conv_3=tf.layers.conv2d(
                     inputs=self.pool_2,
-                    filters=64,
-                    kernel_size=[4,4],
+                    filters=32,
+                    kernel_size=[2,2],
                     padding='valid',
                     activation=tf.nn.leaky_relu)
 
             self.pool_3=tf.layers.average_pooling2d(
                     inputs=self.conv_3,
-                    pool_size=[4,4],
+                    pool_size=[2,2],
                     strides=2)
 
             print(self.pool_3)

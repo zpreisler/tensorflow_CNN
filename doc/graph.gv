@@ -1,10 +1,21 @@
 digraph CNN {
 	node [shape =record];
 
-	flat [label = "{  { <f0> pool1 | <f1> pool2 | <f2> pool3 }  } "]
-	conv1 [label ="conv/pool"]
-	conv2 [label ="conv/pool"]
-	conv3 [label ="conv/pool"]
+	flat [label = "{  { <f0> pool1 | <f1> pool2 | <f2> pool3 }  } "];
+	conv1 [label ="conv/pool"];
+	conv2 [label ="conv/pool"];
+	conv3 [label ="conv/pool"];
+
+	d1 [label = "kernel=[4,4]\n strides=[2,2]\n filters=16"]
+	d2 [label = "kernel=[4,4]\n strides=[2,2]\n filters=32"]
+	d3 [label = "kernel=[4,4]\n strides=[2,2]\n filters=64"]
+
+	subgraph A {
+		edge [dir=none, color=gray]
+		conv1 -> d1;
+		conv2 -> d2;
+		conv3 -> d3;
+	}
 
 	input -> conv1;
 	conv1 -> conv2;
@@ -16,6 +27,6 @@ digraph CNN {
 	subgraph c_1 {
 		label="Subgraph B";
 		flat -> dense;
-		dense -> out;
+		dense -> output;
 	}
 }
