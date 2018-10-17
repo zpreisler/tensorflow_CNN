@@ -2,7 +2,7 @@ def __parse__(dataset):
     import tensorflow as tf
     image_string=tf.read_file(dataset['inputs'])
     image_decoded=tf.image.decode_png(image_string,3)
-    image_resized=tf.image.resize_images(image_decoded,[128,128])
+    image_resized=tf.image.resize_images(image_decoded,[256,256])
     image_cropped=tf.image.central_crop(image_resized,0.5)
 
     images=image_cropped/tf.reduce_max(image_cropped)
@@ -34,6 +34,26 @@ def get_labels(files,ext='.png',key='number_of_patches'):
 
     return files,labels 
 
+def get_labels_from_names(files):
+    from numpy import array
+    labels=[]
+
+    for f in files:
+        label=0
+        if f[f.rfind('/')+1] is 'h':
+            label=1
+        if f[f.rfind('/')+1] is 's':
+            label=2
+        if f[f.rfind('/')+1] is 'x':
+            label=3
+        labels+=[label]
+
+    files=array(files)
+    labels=array(labels,dtype='int32')
+
+    return files,labels
+        
+
 def data_pipeline(files=None,batch=32):
     import tensorflow as tf
     from numpy import linspace,zeros,array
@@ -41,7 +61,8 @@ def data_pipeline(files=None,batch=32):
     train dataset
     """
 
-    files,labels=get_labels(files)
+    #files,labels=get_labels(files)
+    files,labels=get_labels_from_names(files)
 
     length=len(files)
     if batch>length:

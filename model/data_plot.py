@@ -125,15 +125,15 @@ def save_images_softmax(name,image,label,true,softmax,x=5,y=5):
             ax1=axes[n,m]
             ax1.imshow(image[count],origin='lower')
 
-            ax1.set_xlim(0,63)
-            ax1.set_ylim(0,63)
+            ax1.set_xlim(0,123)
+            ax1.set_ylim(0,123)
             ax1.set_xticklabels([])
             ax1.set_yticklabels([])
 
             ax2=axes[n,m].twiny()
             x=arange(len(softmax[count]))+0.5
-            ax2.bar(x,true[count]*47,width=0.9,edgecolor='k',linewidth=0.9)
-            ax2.bar(x,softmax[count]*47,width=0.9,edgecolor='k',linewidth=0.9)
+            ax2.bar(x,true[count]*95,width=0.9,edgecolor='k',linewidth=0.9)
+            ax2.bar(x,softmax[count]*95,width=0.9,edgecolor='k',linewidth=0.9)
 
             ax2.set_xticklabels([])
 
