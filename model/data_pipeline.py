@@ -1,14 +1,23 @@
 def __parse__(dataset):
     import tensorflow as tf
+    from numpy import random
     image_string=tf.read_file(dataset['inputs'])
     image_decoded=tf.image.decode_png(image_string,3)
-    image_resized=tf.image.resize_images(image_decoded,[256,256])
-    image_cropped=tf.image.central_crop(image_resized,0.5)
 
-    images=image_cropped/tf.reduce_max(image_cropped)
 
-    images=tf.image.random_flip_left_right(images)
-    images=tf.image.random_flip_up_down(images)
+    image_cropped=tf.image.central_crop(image_decoded,0.5)
+    image_resized=tf.image.resize_images(image_cropped,[128,128])
+
+    #images=image_cropped/tf.reduce_max(image_cropped)
+    images=image_resized/tf.reduce_max(image_resized)*tf.random_uniform([1],minval=0.7,maxval=1.0)
+
+    #noise=tf.truncated_normal(shape=tf.shape(images),mean=0.0,stddev=0.33,dtype=tf.float32)
+    #images=tf.add(images,noise)
+
+    #images=images/tf.reduce_max(images)
+    #images=image_cropped/tf.reduce_max(image_cropped)*random.uniform(0.9,1.0)
+    #images=tf.image.random_flip_left_right(images)
+    #images=tf.image.random_flip_up_down(images)
     #images=tf.image.rot90(images)
 
     labels=tf.one_hot(dataset['outputs'],10)
@@ -74,7 +83,8 @@ def data_pipeline(files=None,batch=32):
             )
     dataset=dataset.map(__parse__)
 
-    train_dataset=dataset.repeat().shuffle(length).batch(batch)
+    train_dataset=dataset.repeat().shuffle(batch).batch(batch)
+    #train_dataset=dataset.repeat().batch(batch)
 
     iterator=tf.data.Iterator.from_structure(
             train_dataset.output_types,

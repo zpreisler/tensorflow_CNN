@@ -89,8 +89,11 @@ class discriminator:
 
             print(self.dense_1)
 
+            self.dropout=tf.layers.dropout(
+                    inputs=self.dense_1)
+
             self.dense_2=tf.layers.dense(
-                    inputs=self.dense_1,
+                    inputs=self.dropout,
                     units=output_dim,
                     activation=tf.nn.leaky_relu)
 
