@@ -11,13 +11,13 @@ def main(argv):
     from model.model import discriminator
     from glob import glob
 
-    #files=(glob('gen_images/evaluate/*.png'))
-    #next_element,init_op=data_pipeline(files,batch=25)
+    files=(glob('gen_images/evaluate/*.png'))
+    next_element,init_op=data_pipeline(files,batch=25)
 
-    files=(glob('gen_images/rotate/*.png'))
+    files=(glob('gen_images/*.png'))
     next_element,init_op=data_pipeline(files,batch=128)
 
-    print(len(files))
+    print("numer of images: %d"%len(files))
 
     fl=discriminator(inputs=next_element['images'],outputs=next_element['labels']) 
 
@@ -58,14 +58,12 @@ def main(argv):
             if i%100 is 0:
                 save.save(session,'log/last.ckpt')
 
-        for i in range(20):
+        for i in range(10):
                 a,true,softmax,acc=session.run([next_element,
                     fl.outputs,fl.softmax,
                     fl.accuracy])
                 
                 print(i,acc)
-                #print(a['images'].shape)
-                #plot_images_softmax(a['images'],a['labels'],true,softmax)
                 
                 name='figures/b_%04d.png'%count
                 save_images_softmax(name,a['images'],a['labels'],true,softmax)

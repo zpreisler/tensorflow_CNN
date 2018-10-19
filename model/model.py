@@ -77,6 +77,7 @@ class discriminator:
             self.flat_3=tf.reshape(self.pool_3,[-1,n])
 
             self.flat=tf.concat([self.flat_1,self.flat_2,self.flat_3],1)
+
             print(self.flat_1)
             print(self.flat_2)
             print(self.flat_3)
