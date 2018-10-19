@@ -1,20 +1,19 @@
-def plot_images(image,label,x=5,y=5):
+def plot_images(image,x=2,y=2,wspace=0.22,hspace=0.22):
     from matplotlib.pyplot import imshow,figure,show,subplots,subplots_adjust
-    fig,axes=subplots(x,y,figsize=(12,12))
+    fig,axes=subplots(x,y,figsize=(10,10))
     count=0
     for n in range(x):
         for m in range(y):
+            print(n,m,count)
             axes[n,m].imshow(image[count])
-            axes[n,m].set_title("%d"%label[count].argmax(),color='g')
             count+=1
 
     subplots_adjust(left=0.03,
             right=0.97,
             bottom=0.03,
             top=0.97,
-            wspace=0.22,
-            hspace=0.22)
-    show()
+            wspace=wspace,
+            hspace=hspace)
 
 def save_images(name,image,label,x=5,y=5):
     from matplotlib.pyplot import imshow,figure,show,subplots,subplots_adjust,savefig,close
@@ -73,7 +72,7 @@ def save_softmax(name,true,softmax,x=5,y=5):
     savefig(name)
     close()
 
-def plot_images_softmax(image,label,true,softmax,x=5,y=5):
+def plot_images_softmax(image,true,softmax,x=5,y=5):
     from matplotlib.pyplot import imshow,figure,show,subplots,subplots_adjust,bar
     from numpy import arange
     fig,axes=subplots(x,y,figsize=(12,12))
@@ -83,8 +82,8 @@ def plot_images_softmax(image,label,true,softmax,x=5,y=5):
             ax1=axes[n,m]
             ax1.imshow(image[count],origin='lower')
 
-            ax1.set_xlim(0,63)
-            ax1.set_ylim(0,63)
+            ax1.set_xlim(0,127)
+            ax1.set_ylim(0,127)
 
             ax1.set_xticklabels([])
             ax1.set_yticklabels([])
@@ -104,7 +103,6 @@ def plot_images_softmax(image,label,true,softmax,x=5,y=5):
 
             ax2.set_xlim(0,10)
 
-            axes[n,m].set_title("%d"%label[count].argmax(),color='g')
             count+=1
 
     subplots_adjust(left=0.03,

@@ -3,6 +3,17 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 import tensorflow as tf
+
+def get_grid(n=2):
+    d=1.0/n
+    b=[]
+    for i in range(n):
+        ii=i+1
+        for j in range(n):
+            jj=j+1
+            b+=[[i*d,j*d,ii*d,jj*d]]
+    return b
+
 def main(argv):
     print("Convolutional Neural Network")
     import tensorflow as tf
@@ -11,7 +22,7 @@ def main(argv):
     from model.model import discriminator
     from glob import glob
 
-    files=(glob('gen_images/hc10_100.png'))
+    files=(glob('gen_images/evaluate/hc20_83.png'))
 
     dataset=tf.data.Dataset.from_tensor_slices(files)
 
@@ -31,7 +42,9 @@ def main(argv):
 
         print(image_resized)
         t=tf.stack(image)
-        t=tf.expand_dims(image[0],0)
+
+        image_decoded=image_decoded/tf.reduce_max(image_decoded)
+        t=tf.expand_dims(image_decoded,0)
         print(t)
         
         b=tf.constant([[[0.3,0.3,0.6,0.6]]],dtype=tf.float32)
@@ -42,9 +55,15 @@ def main(argv):
 
         tt=tf.image.draw_bounding_boxes(t,boxes)
 
-        b=tf.constant([[0.3,0.3,0.6,0.6],[0.1,0.1,0.5,0.5]])
-        c=tf.constant([0,0])
-        d=tf.constant([128,128])
+        #b=tf.constant([[0.3,0.3,0.6,0.6],[0.1,0.1,0.5,0.5]])
+        #d=tf.constant([128,128])
+        #b=[[0.3,0.3,0.6,0.6],[0.1,0.1,0.5,0.5]]
+
+        n=4
+        b=get_grid(n=n)
+
+        c=([0]*len(b))
+        d=[128,128]
         print(b)
         print(c)
         print(d)
@@ -63,8 +82,9 @@ def main(argv):
         from matplotlib.pyplot import imshow,show,figure
         figure()
         imshow(a[0])
-        figure()
-        imshow(b[1])
+
+        plot_images(b,x=n,y=n,
+                wspace=.0,hspace=.0)
         
         show()
 
