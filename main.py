@@ -12,13 +12,13 @@ def main(argv):
     from glob import glob
 
     batch=128
-    nsteps=200
+    nsteps=0
     dsteps=1
 
-    files=(glob('gen_images/*.png'))
+    files=(glob('gen_images/rotate/rotate/*.png'))
     next_element,init_op=data_pipeline(files,batch=batch)
 
-    files=(glob('gen_images/evaluate/sq20_45.png'))
+    files=(glob('gen_images/evaluate/sq20_200.png'))
     next_eval_element,init_eval_op=data_eval_pipeline(files)
 
     print("numer of images: %d"%len(files))
@@ -27,6 +27,8 @@ def main(argv):
     detect=detector(inputs=next_eval_element['images'],outputs=next_eval_element['labels']) 
 
     save=tf.train.Saver()
+
+    f_loss=open('_loss.dat','w')
 
     with tf.Session() as session:
         print("Start Session")
@@ -48,10 +50,12 @@ def main(argv):
         for step in range(nsteps):
             acc,loss,_=session.run([fl.accuracy,
                 fl.loss,fl.train],feed_dict={fl.rate: 1e-4})
-            print(step,acc,loss)
+            print('[{}] acc: {:.4f} loss: {:.4f}'.format(step,acc,loss))
+            f_loss.write('{} {} {}\n'.format(step,acc,loss))
 
             if step%100 is 0:
                 save.save(session,'log/last.ckpt')
+                f_loss.flush()
 #
 #                a,true,softmax,acc=session.run([next_element,
 #                    fl.outputs,fl.softmax,
@@ -68,9 +72,14 @@ def main(argv):
 #            if i%100 is 0:
 #                save.save(session,'log/last.ckpt')
 #
+
+        f_loss.close()
+        
         for step in range(dsteps):
                 image,true,softmax=session.run([tf.image.grayscale_to_rgb(detect.inputs),detect.outputs,detect.softmax])
-                plot_images_softmax(image,true,softmax)
+                n=11
+                plot_images(image,x=n,y=n,hspace=0,wspace=0)
+                plot_images_softmax(image,true,softmax,x=n,y=n,hspace=0,wspace=0)
 #                
 #                print(i,acc)
 #                

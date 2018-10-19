@@ -10,7 +10,8 @@ def __parse__(dataset):
     images=image_resized/tf.reduce_max(image_resized)
     images=tf.image.random_flip_up_down(images)
     images=tf.image.random_flip_left_right(images)
-    images=tf.image.rot90(images)
+
+    images=tf.image.rot90(images,k=1)
 
     labels=tf.one_hot(dataset['outputs'],10)
 
@@ -76,7 +77,7 @@ def data_pipeline(files=None,batch=32):
             )
     dataset=dataset.map(__parse__)
 
-    train_dataset=dataset.repeat().shuffle(batch).batch(batch)
+    train_dataset=dataset.repeat().shuffle(length).batch(batch)
 
     iterator=tf.data.Iterator.from_structure(
             train_dataset.output_types,
@@ -104,10 +105,9 @@ def __parse2__(dataset):
 
     image=tf.expand_dims(image_decoded,0)
 
-    boxes=get_grid(n=1)
-    boxes+=get_grid(n=12)
+    #boxes=get_grid(n=1)
+    boxes=get_grid(n=11)
     box_ind=([0]*len(boxes))
-    print(boxes)
     size=[128,128]
     images=tf.image.crop_and_resize(image,boxes,box_ind,size)
 

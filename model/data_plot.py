@@ -15,6 +15,47 @@ def plot_images(image,x=2,y=2,wspace=0.22,hspace=0.22):
             wspace=wspace,
             hspace=hspace)
 
+def plot_images_softmax(image,true,softmax,x=5,y=5,hspace=0.22,wspace=0.22):
+    from matplotlib.pyplot import imshow,figure,show,subplots,subplots_adjust,bar
+    from numpy import arange
+    fig,axes=subplots(x,y,figsize=(10,10))
+    count=0
+    for n in range(x):
+        for m in range(y):
+            ax1=axes[n,m]
+            ax1.imshow(image[count])
+
+            ax1.set_xlim(0,127)
+            ax1.set_ylim(127,0)
+
+            ax1.set_xticklabels([])
+            ax1.set_yticklabels([])
+
+            ax2=ax1.twiny()
+            x=arange(len(softmax[count]))+0.5
+            ax2.bar(x,true[count]*47,width=0.9,edgecolor='k',linewidth=0.9)
+            ax2.bar(x,softmax[count]*47,width=0.9,edgecolor='k',linewidth=0.9)
+
+            ax2.set_xticklabels([])
+
+            #for a,b in zip(x,softmax[count]):
+            #    if b>0.35: 
+            #        ax2.text(a+0.09,1,r"$[%d]\,\, %.2lf$"%(a,b),ha='center',va='bottom',rotation=90)
+            #    elif b>0.15:
+            #        ax2.text(a+0.09,1,r"$[%d]$"%(a),ha='center',va='bottom',rotation=90)
+
+            #ax2.set_xlim(0,10)
+
+            count+=1
+
+    subplots_adjust(left=0.03,
+            right=0.97,
+            bottom=0.03,
+            top=0.97,
+            wspace=wspace,
+            hspace=hspace)
+    show()
+
 def save_images(name,image,label,x=5,y=5):
     from matplotlib.pyplot import imshow,figure,show,subplots,subplots_adjust,savefig,close
     fig,axes=subplots(x,y,figsize=(12,12))
@@ -72,8 +113,8 @@ def save_softmax(name,true,softmax,x=5,y=5):
     savefig(name)
     close()
 
-def plot_images_softmax(image,true,softmax,x=5,y=5):
-    from matplotlib.pyplot import imshow,figure,show,subplots,subplots_adjust,bar
+def save_images_softmax(name,image,label,true,softmax,x=5,y=5,wspace=0.22,hspace=0.22):
+    from matplotlib.pyplot import imshow,figure,show,subplots,subplots_adjust,bar,savefig,close
     from numpy import arange
     fig,axes=subplots(x,y,figsize=(12,12))
     count=0
@@ -84,47 +125,6 @@ def plot_images_softmax(image,true,softmax,x=5,y=5):
 
             ax1.set_xlim(0,127)
             ax1.set_ylim(0,127)
-
-            ax1.set_xticklabels([])
-            ax1.set_yticklabels([])
-
-            ax2=axes[n,m].twiny()
-            x=arange(len(softmax[count]))+0.5
-            ax2.bar(x,true[count]*47,width=0.9,edgecolor='k',linewidth=0.9)
-            ax2.bar(x,softmax[count]*47,width=0.9,edgecolor='k',linewidth=0.9)
-
-            ax2.set_xticklabels([])
-
-            for a,b in zip(x,softmax[count]):
-                if b>0.35: 
-                    ax2.text(a+0.09,1,r"$[%d]\,\, %.2lf$"%(a,b),ha='center',va='bottom',rotation=90)
-                elif b>0.15:
-                    ax2.text(a+0.09,1,r"$[%d]$"%(a),ha='center',va='bottom',rotation=90)
-
-            ax2.set_xlim(0,10)
-
-            count+=1
-
-    subplots_adjust(left=0.03,
-            right=0.97,
-            bottom=0.03,
-            top=0.97,
-            wspace=0.22,
-            hspace=0.22)
-    show()
-
-def save_images_softmax(name,image,label,true,softmax,x=5,y=5):
-    from matplotlib.pyplot import imshow,figure,show,subplots,subplots_adjust,bar,savefig,close
-    from numpy import arange
-    fig,axes=subplots(x,y,figsize=(12,12))
-    count=0
-    for n in range(x):
-        for m in range(y):
-            ax1=axes[n,m]
-            ax1.imshow(image[count],origin='lower')
-
-            ax1.set_xlim(0,123)
-            ax1.set_ylim(0,123)
             ax1.set_xticklabels([])
             ax1.set_yticklabels([])
 
@@ -150,7 +150,7 @@ def save_images_softmax(name,image,label,true,softmax,x=5,y=5):
             right=0.97,
             bottom=0.03,
             top=0.97,
-            wspace=0.22,
-            hspace=0.22)
+            wspace=wspace,
+            hspace=hspace)
     savefig(name)
     close()

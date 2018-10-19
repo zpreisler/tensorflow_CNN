@@ -24,8 +24,8 @@ class discriminator(object):
         with tf.variable_scope(name,reuse=reuse):
             self.conv_1=tf.layers.conv2d(
                     inputs=inputs,
-                    filters=8,
-                    kernel_size=[2,2],
+                    filters=16,
+                    kernel_size=[4,4],
                     padding='valid',
                     activation=tf.nn.leaky_relu)
 
@@ -37,8 +37,8 @@ class discriminator(object):
 
             self.conv_2=tf.layers.conv2d(
                     inputs=self.pool_1,
-                    filters=16,
-                    kernel_size=[2,2],
+                    filters=32,
+                    kernel_size=[4,4],
                     padding='valid',
                     activation=tf.nn.leaky_relu)
 
@@ -50,7 +50,7 @@ class discriminator(object):
 
             self.conv_3=tf.layers.conv2d(
                     inputs=self.pool_2,
-                    filters=32,
+                    filters=64,
                     kernel_size=[2,2],
                     padding='valid',
                     activation=tf.nn.leaky_relu)
@@ -70,7 +70,8 @@ class discriminator(object):
             n=self.pool_3.shape[1]*self.pool_3.shape[2]*self.pool_3.shape[3]
             self.flat_3=tf.reshape(self.pool_3,[-1,n])
 
-            self.flat=tf.concat([self.flat_1,self.flat_2,self.flat_3],1)
+            #self.flat=tf.concat([self.flat_1,self.flat_2,self.flat_3],1)
+            self.flat=self.flat_3
 
             print(self.flat_2)
             print(self.flat_3)
@@ -129,8 +130,8 @@ class detector(discriminator):
         with tf.variable_scope(name,reuse=reuse):
             self.conv_1=tf.layers.conv2d(
                     inputs=inputs,
-                    filters=8,
-                    kernel_size=[2,2],
+                    filters=16,
+                    kernel_size=[4,4],
                     padding='valid',
                     activation=tf.nn.leaky_relu)
 
@@ -142,8 +143,8 @@ class detector(discriminator):
 
             self.conv_2=tf.layers.conv2d(
                     inputs=self.pool_1,
-                    filters=16,
-                    kernel_size=[2,2],
+                    filters=32,
+                    kernel_size=[4,4],
                     padding='valid',
                     activation=tf.nn.leaky_relu)
 
@@ -155,7 +156,7 @@ class detector(discriminator):
 
             self.conv_3=tf.layers.conv2d(
                     inputs=self.pool_2,
-                    filters=32,
+                    filters=64,
                     kernel_size=[2,2],
                     padding='valid',
                     activation=tf.nn.leaky_relu)
@@ -175,7 +176,8 @@ class detector(discriminator):
             n=self.pool_3.shape[1]*self.pool_3.shape[2]*self.pool_3.shape[3]
             self.flat_3=tf.reshape(self.pool_3,[-1,n])
 
-            self.flat=tf.concat([self.flat_1,self.flat_2,self.flat_3],1)
+            #self.flat=tf.concat([self.flat_1,self.flat_2,self.flat_3],1)
+            self.flat=self.flat_3
 
             print(self.flat_2)
             print(self.flat_3)

@@ -2,13 +2,13 @@ digraph CNN {
 	node [shape =record];
 
 	flat [label = "{  { <f0> pool1 | <f1> pool2 | <f2> pool3 }  } "];
-	conv1 [label ="conv/pool"];
-	conv2 [label ="conv/pool"];
-	conv3 [label ="conv/pool"];
+	conv1 [label ="conv/average pooling"];
+	conv2 [label ="conv/average pooling"];
+	conv3 [label ="conv/average pooling"];
 
 	d1 [label = "kernel=[4,4]\n strides=[2,2]\n filters=16"]
 	d2 [label = "kernel=[4,4]\n strides=[2,2]\n filters=32"]
-	d3 [label = "kernel=[4,4]\n strides=[2,2]\n filters=64"]
+	d3 [label = "kernel=[2,2]\n strides=[2,2]\n filters=64"]
 
 	subgraph A {
 		edge [dir=none, color=gray]
