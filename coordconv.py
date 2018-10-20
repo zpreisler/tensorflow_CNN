@@ -27,59 +27,44 @@ def yfilter(dim):
     
     return y
 
-class coord_conv2d:
-    def __init__(self,
-            #inputs,
-            filters,
-            kernel_size=1,
-            strides=(1,1),
-            padding='valid',
-            name=None):
-        self.kwargs={
-                'filters': filters,
-                'kernel_size': kernel_size,
-                'strides': strides,
-                'padding': padding,
-                'name': name
-                }
+def add_xy_coord(in_tensor,name=None):
+    import tensorflow as tf
+    with tf.name_scope(name,'add_xy_coord',[in_tensor]):
+        batch_size=tf.shape(in_tensor)[0]
+        xdim=in_tensor.shape[1]
+        ydim=in_tensor.shape[2]
 
-    def __call__(self,in_tensor):
-        return tf.layers.conv2d(in_tensor,**self.kwargs)
+        x=xfilter(xdim)
+        y=yfilter(ydim)
+
+        x=tf.manip.tile(x,[batch_size,ydim,1])
+        y=tf.manip.tile(y,[batch_size,1,xdim])
+
+        x=tf.expand_dims(x,-1)
+        y=tf.expand_dims(y,-1)
+
+        x=tf.cast(x,dtype=in_tensor.dtype)
+        y=tf.cast(y,dtype=in_tensor.dtype)
+
+        return tf.concat([in_tensor,x,y],-1)
 
 def main(argv):
     print("Convolutional Neural Network")
+    from numpy import array,stack
 
-    batch_size=tf.constant(1)
-    xdim=tf.constant(3)
-    ydim=tf.constant(3)
+    Z=tf.placeholder(tf.float64,[None,2,2,1])
 
-    x=xfilter(xdim)
-    y=yfilter(ydim)
+    new_tensor=add_xy_coord(Z)
 
-    x=tf.tile(x,[batch_size,ydim,1])
-    y=tf.tile(y,[batch_size,1,xdim])
+    m=array([[[[.5],[.5]],[[.2],[.2]]]],dtype='float64')
+    mm=stack([*m,*m,*m,*m])
 
-    x=tf.expand_dims(x,-1)
-    y=tf.expand_dims(y,-1)
-
-    z=tf.concat([x,y],-1)
-    Z=tf.placeholder(tf.float64,[None,3,3,2])
-
-    print(x)
-    print(y)
-    print(z)
-
-    #v={'filters': 16, 'padding': 'valid'}
-
-    c=coord_conv2d(filters=16)
-
-    d=c(Z)
+    print(m.shape)
+    print(mm.shape)
 
     with tf.Session() as session:
         print("Run")
-        A=session.run(z)
-        a=session.run(d,feed_dict={Z: A})
-
+        a=session.run(new_tensor,feed_dict={Z: mm})
         from pprint import pprint
         pprint(a)
 
