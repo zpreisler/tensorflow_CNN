@@ -29,6 +29,7 @@ def yfilter(dim):
 
 class coord_conv2d:
     def __init__(self,
+            #inputs,
             filters,
             kernel_size=1,
             strides=(1,1),
@@ -62,6 +63,7 @@ def main(argv):
     y=tf.expand_dims(y,-1)
 
     z=tf.concat([x,y],-1)
+    Z=tf.placeholder(tf.float64,[None,3,3,2])
 
     print(x)
     print(y)
@@ -71,14 +73,15 @@ def main(argv):
 
     c=coord_conv2d(filters=16)
 
-    print(c)
+    d=c(Z)
 
     with tf.Session() as session:
         print("Run")
-        a,b,c=session.run([x,y,z])
+        A=session.run(z)
+        a=session.run(d,feed_dict={Z: A})
 
         from pprint import pprint
-        pprint(c)
+        pprint(a)
 
 if __name__=="__main__":
     import tensorflow as tf
