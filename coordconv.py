@@ -27,31 +27,58 @@ def yfilter(dim):
     
     return y
 
+class coord_conv2d:
+    def __init__(self,
+            filters,
+            kernel_size=1,
+            strides=(1,1),
+            padding='valid',
+            name=None):
+        self.kwargs={
+                'filters': filters,
+                'kernel_size': kernel_size,
+                'strides': strides,
+                'padding': padding,
+                'name': name
+                }
+
+    def __call__(self,in_tensor):
+        return tf.layers.conv2d(in_tensor,**self.kwargs)
+
 def main(argv):
     print("Convolutional Neural Network")
 
     batch_size=tf.constant(1)
-    xdim=tf.constant(4)
-    ydim=tf.constant(4)
-
-    dtype=tf.float32
+    xdim=tf.constant(3)
+    ydim=tf.constant(3)
 
     x=xfilter(xdim)
     y=yfilter(ydim)
 
-    print(x)
-    print(y)
-
     x=tf.tile(x,[batch_size,ydim,1])
     y=tf.tile(y,[batch_size,1,xdim])
 
+    x=tf.expand_dims(x,-1)
+    y=tf.expand_dims(y,-1)
+
+    z=tf.concat([x,y],-1)
+
+    print(x)
+    print(y)
+    print(z)
+
+    #v={'filters': 16, 'padding': 'valid'}
+
+    c=coord_conv2d(filters=16)
+
+    print(c)
+
     with tf.Session() as session:
         print("Run")
-        a,b=session.run([x,y])
+        a,b,c=session.run([x,y,z])
 
         from pprint import pprint
-        pprint(a)
-        pprint(b)
+        pprint(c)
 
 if __name__=="__main__":
     import tensorflow as tf
