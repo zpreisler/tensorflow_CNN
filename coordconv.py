@@ -27,6 +27,7 @@ def main(argv):
     co=coord2d(((image['images']/255.0*-2.0)+1.0),name='acoord2d')
 
     d=discriminator(co)
+    d.define_loss(image['labels'])
 
     with tf.Session() as session:
         print("Run")
