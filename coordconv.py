@@ -7,54 +7,59 @@ def main(argv):
     print("Convolutional Neural Network")
     from numpy import array,stack
     from pprint import pprint
-    from tensorflow_utils import coord2d,image_pipeline,discriminator
+    from tensorflow_utils import image_pipeline,get_labels_from_filenames,discriminator
     from matplotlib.pyplot import imshow,figure,show
+    from glob import glob
 
-    files=["gen_images/hc10_101.png","gen_images/hc10_102.png"]
+    steps=1000
+    batch_size=128
+    rate=1e-4
 
-    image,init_image_op=image_pipeline({'images':files,'labels':[1,2]})
+    train_files=glob("images/scale=8.5/rotate/*.png")
+    train_labels=get_labels_from_filenames(train_files)
 
-    #Z=tf.placeholder(tf.float64,[None,2,2,1])
+    eval_files=glob("images/scale=8.5/eval/*.png")
+    eval_labels=get_labels_from_filenames(eval_files)
 
-    #new_tensor=coord2d(Z,name='coord2d')
+    handle,image,train_image_op,eval_image_op=image_pipeline(
+            {'images': train_files,'labels': train_labels},
+            {'images': eval_files,'labels': eval_labels},
+            batch_size=batch_size)
 
-    #m=array([[[[.5],[.5]],[[.2],[.2]]]],dtype='float64')
-    #mm=stack([*m,*m,*m,*m])
+    d=discriminator(image['images'],k=5,l=5)
+    d.define_output(image['labels'])
 
-    #print(m.shape)
-    #print(mm.shape)
-
-    co=coord2d(((image['images']/255.0*-2.0)+1.0),name='acoord2d')
-
-    d=discriminator(co)
-    d.define_loss(image['labels'])
+    save=tf.train.Saver()
 
     with tf.Session() as session:
         print("Run")
-        #a=session.run(new_tensor,feed_dict={Z: m})
-        #pprint(a)
+        try:
+            save.restore(session,'log/last.ckpt')
+        except tf.errors.NotFoundError:
+            tf.global_variables_initializer().run(session=session)
+            pass
 
-        session.run(init_image_op)
+        training_handle=session.run(train_image_op.string_handle())
+        evaluation_handle=session.run(eval_image_op.string_handle())
 
-        #img=session.run(image)
-        img=session.run(co)
+        session.run(train_image_op.initializer)
+        session.run(eval_image_op.initializer)
 
-        #la=img['labels']
-        #img=img['images']
+        for step in range(steps):
+            loss,accuracy,_=session.run([d.loss,
+                d.accuracy,
+                d.train],
+                feed_dict={ d.rate: rate,
+                    handle: training_handle})
+            print("[{}] {:2.4f}: {:1.4f}".format(step,loss,accuracy))
 
-        
+            if step%5 is 0:
+                loss,accuracy,true,prediction=session.run([d.loss,d.accuracy,d.true,d.prediction],
+                    feed_dict={handle: evaluation_handle})
+                print("\t\t\t{:2.4f}: {:2.4}\n {} {}".format(loss,accuracy,true,prediction))
 
-        #print(la)
-        print(img.shape)
-        pprint(img)
-        #img=session.run(tf.image.grayscale_to_rgb(img))
-
-        #pprint(img)
-        #print(img.shape)
-
-        figure()
-        imshow(img[0])
-        show()
+            if step%5 is 0:
+                save.save(session,'log/last.ckpt')
 
 if __name__=="__main__":
     import tensorflow as tf
