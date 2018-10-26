@@ -11,14 +11,14 @@ def main(argv):
     from matplotlib.pyplot import imshow,figure,show
     from glob import glob
 
-    steps=1000
+    steps=10
     batch_size=128
-    rate=1e-4
+    rate=5e-4
 
     train_files=glob("images/scale=8.5/rotate/*.png")
     train_labels=get_labels_from_filenames(train_files)
 
-    eval_files=glob("images/scale=8.5/eval/*.png")
+    eval_files=glob("images/scale=8.5/eval2/sss1_20.png")
     eval_labels=get_labels_from_filenames(eval_files)
 
     handle,image,train_image_op,eval_image_op=image_pipeline(
@@ -54,9 +54,10 @@ def main(argv):
             print("[{}] {:2.4f}: {:1.4f}".format(step,loss,accuracy))
 
             if step%5 is 0:
-                loss,accuracy,true,prediction=session.run([d.loss,d.accuracy,d.true,d.prediction],
+                loss,accuracy,true,prediction,softmax=session.run([d.loss,d.accuracy,d.true,d.prediction,d.softmax],
                     feed_dict={handle: evaluation_handle})
                 print("\t\t\t{:2.4f}: {:2.4}\n {} {}".format(loss,accuracy,true,prediction))
+                print('{}'.format(softmax))
 
             if step%5 is 0:
                 save.save(session,'log/last.ckpt')
